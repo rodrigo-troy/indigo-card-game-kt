@@ -9,87 +9,67 @@ $ Project: Indigo Card Game
  */
 class Game {
     private var status = Status.START
-    private val cards = listOf("A",
-                               "2",
-                               "3",
-                               "4",
-                               "5",
-                               "6",
-                               "7",
-                               "8",
-                               "9",
-                               "10",
-                               "J",
-                               "Q",
-                               "K")
+    private var players: MutableList<Player> = mutableListOf()
+    private var deck: Deck = Deck()
+    private var table: Table = Table()
+    private var currentPlayer: Player = Player()
 
-    private val suits = listOf("♦",
-                               "♥",
-                               "♠",
-                               "♣")
+    init {
+        println("Indigo Card Game")
+        table.addCards(deck.takeCards(4))
+    }
 
-    private var deck = cards.flatMap { card -> suits.map { suit -> card + suit } }
+    fun dealCards(numberOfCards: Int) {
+        players.forEach { player ->
+            player.addCards(deck.takeCards(numberOfCards))
+        }
+    }
 
-    fun getStatus() = status
+    fun getInitialCardsAsString(): String {
+        return "Initial cards on the table: ${table.getCardsAsString()}"
+    }
 
-    fun printCards() {
-        println(cards.joinToString(" "))
-        println()
-        println(suits.joinToString(" "))
-        println()
-        println(deck.joinToString(" "))
+    fun getChoosePrompt(): String {
+        return "Choose a card to play (1-${currentPlayer.getNumberOfCardsInHand()})"
+    }
+
+    fun getCurrentPlayerHandAsString(): String {
+        return currentPlayer.getCardsInHandAsString()
+    }
+
+    fun getTableStatus(): String {
+        return table.status()
+    }
+
+    fun setPlayFirst(player: Player) {
+        currentPlayer = player
+    }
+
+    fun addPlayer(player: Player,
+                  playFirst: Boolean = false) {
+        players.add(player)
+
+        if (playFirst) {
+            setPlayFirst(player)
+        }
+    }
+
+    fun getStatus(): Status {
+        return status
     }
 
     fun action(value: String) {
         when (value) {
-            "reset" -> {
-                deck = cards.flatMap { card -> suits.map { suit -> card + suit } }
-                println("Card deck is reset.")
-            }
-
-            "shuffle" -> {
-                deck = deck.shuffled()
-                println("Card deck is shuffled.")
-            }
-
-            "get" -> {
-                println("Number of cards:")
-                var number = readln()
-
-                if (!isValidNumber(number)) {
-                    return
-                }
-
-                println(deck.take(number.toInt())
-                            .joinToString(" "))
-
-                deck = deck.drop(number.toInt())
-            }
-
             "exit" -> {
-                println("Bye!")
                 status = Status.FINISHED
+                println("Bye!")
             }
 
             else -> {
-                println("Wrong action.")
+                val cardIndex = value.toInt() - 1
+                val card = currentPlayer.getCard(cardIndex)
+
             }
-        }
-    }
-
-    private fun isValidNumber(number: String): Boolean {
-        if (Regex("^([1-9]|[1-4][0-9]|5[0-2])\$").matches(number)) {
-            val numberInt = number.toInt()
-
-            if (numberInt > deck.size) {
-                println("The remaining cards are insufficient to meet the request.")
-                return false
-            }
-
-            return true
-        } else {
-            println("Invalid number of cards.")
-            return false
         }
     }
 }
