@@ -9,5 +9,6 @@ $ Project: Indigo Card Game
  */
 enum class Status {
     START,
+    NO_CARDS_LEFT,
     FINISHED;
 }

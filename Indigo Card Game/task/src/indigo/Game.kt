@@ -7,51 +7,39 @@ $ Project: Indigo Card Game
  * Date: 02-02-23
  * Time: 19:09
  */
-class Game {
+class Game(private val players: List<Player>) {
     private var status = Status.START
-    private var players: MutableList<Player> = mutableListOf()
     private var deck: Deck = Deck()
     private var table: Table = Table()
-    private var currentPlayer: Player = Player()
+    private var currentPlayer: Player = Player(false)
+
+    val currentPlayerReadOnly: Player
+        get() = currentPlayer
 
     init {
-        println("Indigo Card Game")
         table.addCards(deck.takeCards(4))
+        players.forEach {
+            dealCards(it,
+                      6)
+            if (it.isFirst) {
+                currentPlayer = it
+            }
+        }
     }
 
-    fun dealCards(numberOfCards: Int) {
-        players.forEach { player ->
-            player.addCards(deck.takeCards(numberOfCards))
-        }
+    private fun dealCards(player: Player,
+                          numberOfCards: Int) {
+        player.addCards(deck.takeCards(numberOfCards))
     }
 
     fun getInitialCardsAsString(): String {
         return "Initial cards on the table: ${table.getCardsAsString()}"
     }
 
-    fun getChoosePrompt(): String {
-        return "Choose a card to play (1-${currentPlayer.getNumberOfCardsInHand()})"
-    }
+    fun getChoosePrompt(): String = "Choose a card to play (1-${currentPlayer.getNumberOfCardsInHand()})"
 
     fun getCurrentPlayerHandAsString(): String {
         return currentPlayer.getCardsInHandAsString()
-    }
-
-    fun getTableStatus(): String {
-        return table.status()
-    }
-
-    fun setPlayFirst(player: Player) {
-        currentPlayer = player
-    }
-
-    fun addPlayer(player: Player,
-                  playFirst: Boolean = false) {
-        players.add(player)
-
-        if (playFirst) {
-            setPlayFirst(player)
-        }
     }
 
     fun getStatus(): Status {
@@ -60,16 +48,43 @@ class Game {
 
     fun action(value: String) {
         when (value) {
+            "robotTurn" -> {
+                val card = currentPlayer.throwCard(0)
+                table.addCard(card)
+                println("Computer plays $card\n")
+            }
+
             "exit" -> {
                 status = Status.FINISHED
-                println("Bye!")
             }
 
             else -> {
-                val cardIndex = value.toInt() - 1
-                val card = currentPlayer.getCard(cardIndex)
+                if (!checkNumber(value)) {
+                    return
+                }
 
+                val cardIndex = value.toInt() - 1
+                val card = currentPlayer.throwCard(cardIndex)
+                table.addCard(card)
             }
+        }
+
+        if (currentPlayer.getNumberOfCardsInHand() == 0 && deck.getNumberOfCards() >= 6) {
+            dealCards(currentPlayer,
+                      6)
+        }
+
+        currentPlayer = players[(players.indexOf(currentPlayer) + 1) % players.size]
+    }
+
+    private fun checkNumber(value: String): Boolean {
+        val regex = Regex("[1-${currentPlayer.getNumberOfCardsInHand()}]")
+        return regex.matches(value)
+    }
+
+    companion object {
+        fun getTableStatus(game: Game): String {
+            return game.table.status()
         }
     }
 }

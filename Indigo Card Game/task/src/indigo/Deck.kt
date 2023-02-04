@@ -7,7 +7,7 @@ class Deck {
         reset()
     }
 
-    fun reset() {
+    private fun reset() {
         cards.clear()
         Suit.values()
             .filter { it != Suit.UNDEFINED }
@@ -21,15 +21,11 @@ class Deck {
         cards.shuffle()
     }
 
-    fun deal(): Card {
-        return cards.removeAt(0)
+    fun takeCards(numberOfCards: Int): MutableList<Card> {
+        return cards.take(numberOfCards)
+            .toMutableList()
+            .also { cards.removeAll(it) }
     }
 
-    fun takeCards(numberOfCards: Int): MutableList<Card> {
-        val cardsToTake = mutableListOf<Card>()
-        for (i in 1..numberOfCards) {
-            cardsToTake.add(deal())
-        }
-        return cardsToTake
-    }
+    fun getNumberOfCards(): Int = cards.size
 }

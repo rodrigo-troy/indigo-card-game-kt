@@ -1,21 +1,27 @@
 package indigo
 
 fun main() {
-    val game = Game()
-
+    println("Indigo Card Game")
     println("Play first?")
     val playFirst = readln()
-    game.addPlayer(Player(),
-                   playFirst == "yes")
-    game.addPlayer(Player(),
-                   playFirst != "yes")
-    game.dealCards(6)
+    val game = Game(listOf(Player(true,
+                                  playFirst == "yes"),
+                           Player(false,
+                                  playFirst == "no")))
 
     println(game.getInitialCardsAsString())
     while (game.getStatus() != Status.FINISHED) {
-        println(game.getTableStatus())
-        println(game.getCurrentPlayerHandAsString())
-        println(game.getChoosePrompt())
-        game.action(readln())
+        //println("Player ${game.currentPlayerReadOnly} turn")
+        println(Game.getTableStatus(game))
+
+        if (game.currentPlayerReadOnly.isHuman) {
+            println(game.getCurrentPlayerHandAsString())
+            println(game.getChoosePrompt())
+            game.action(readln())
+        } else {
+            game.action("robotTurn")
+        }
     }
+
+    println("Game Over")
 }
