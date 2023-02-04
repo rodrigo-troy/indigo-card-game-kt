@@ -46,6 +46,26 @@ class Game(private val players: List<Player>) {
         return status
     }
 
+    fun processCard(card: Card) {
+        val topCard = table.getTopCard()
+
+        if (card.face == topCard.face || card.suit == topCard.suit) {
+            currentPlayer.addEarnedCards(table.throwAllCards())
+
+            printPlayersScore()
+        }
+    }
+
+    fun printPlayersScore() {
+        println("${if (currentPlayer.isHuman) "Player" else "Computer"} wins cards")
+        val human = players.filter { it.isHuman }
+            .first()
+        val computer = players.filter { !it.isHuman }
+            .first()
+        print("Score: Player ${human.getScore()} - Computer ${computer.getScore()}\n")
+        print("Cards: Player ${human.getNumberOfCardsEarned()} - Computer ${computer.getNumberOfCardsEarned()}\n")
+    }
+
     fun action(value: String) {
         when (value) {
             "robotTurn" -> {
@@ -53,6 +73,7 @@ class Game(private val players: List<Player>) {
                 val card = currentPlayer.throwCard(0)
                 table.addCard(card)
                 println("Computer plays $card\n")
+                processCard(card)
             }
 
             "exit" -> {
@@ -69,6 +90,7 @@ class Game(private val players: List<Player>) {
                 val cardIndex = value.toInt() - 1
                 val card = currentPlayer.throwCard(cardIndex)
                 table.addCard(card)
+                processCard(card)
             }
         }
 

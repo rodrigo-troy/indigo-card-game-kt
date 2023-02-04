@@ -13,6 +13,7 @@ class Deck {
             .filter { it != Suit.UNDEFINED }
             .forEach { suit ->
                 Face.values()
+                    .filter { it != Face.UNDEFINED }
                     .forEach { face ->
                         cards.add(Card(face,
                                        suit))

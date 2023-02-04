@@ -12,14 +12,22 @@ class Table {
     }
 
     fun status(): String {
+        if (cards.isEmpty())
+            return "No cards on the table"
+
         return "${cards.size} cards on the table, and the top card is ${cards.last()}"
     }
 
-    fun getCardsCount(): Int {
-        return cards.size
-    }
+    fun getTopCard(): Card = cards.lastOrNull() ?: Card(Face.UNDEFINED,
+                                                        Suit.UNDEFINED)
 
-    fun getCardsAsString(): String {
-        return cards.joinToString(" ")
-    }
+    fun getCardsCount(): Int = cards.size
+
+    fun getCardsAsString(): String = cards.joinToString(" ")
+
+    fun throwAllCards(): MutableList<Card> =
+        cards.take(cards.size)
+            .toMutableList()
+            .also { cards.removeAll(it) }
+
 }

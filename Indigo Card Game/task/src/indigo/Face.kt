@@ -13,7 +13,8 @@ enum class Face(val value: String) {
     TEN("10"),
     JACK("J"),
     QUEEN("Q"),
-    KING("K");
+    KING("K"),
+    UNDEFINED("U");
 
     companion object {
         fun fromString(value: String): Face? {

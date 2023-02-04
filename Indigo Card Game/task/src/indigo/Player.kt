@@ -9,16 +9,27 @@ $ Project: Indigo Card Game
  */
 class Player(val isHuman: Boolean,
              val isFirst: Boolean = false) {
+    private var cardsEarned: MutableList<Card> = mutableListOf()
     private var cardsInHand: MutableList<Card> = mutableListOf()
+    private var score: Int = 0
+
+    fun getScore(): Int = score
+
+    fun addScore(score: Int) {
+        this.score += score
+    }
+
+    fun addEarnedCards(cards: MutableList<Card>) {
+        cardsEarned.addAll(cards)
+    }
 
     fun addCards(cards: MutableList<Card>) {
         cardsInHand.addAll(cards)
     }
 
-    fun getNumberOfCardsInHand(): Int {
-        return cardsInHand.size
-    }
+    fun getNumberOfCardsEarned(): Int = cardsEarned.size
 
+    fun getNumberOfCardsInHand(): Int = cardsInHand.size
 
     fun getCardsInHandAsString(): String {
         var cardsInHandAsString = "Cards in hand: "
@@ -29,11 +40,9 @@ class Player(val isHuman: Boolean,
         return cardsInHandAsString
     }
 
-    fun throwCard(cardIndex: Int): Card {
-        return cardsInHand.removeAt(cardIndex)
-    }
+    fun throwCard(cardIndex: Int): Card = cardsInHand.removeAt(cardIndex)
 
-    override fun toString(): String {
-        return "Player(isHuman=$isHuman, cardsInHand=$cardsInHand)"
-    }
+    override fun toString(): String =
+        "Player(isHuman=$isHuman, isFirst=$isFirst, cardsInHand=$cardsInHand, score=$score)"
+
 }
