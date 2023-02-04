@@ -8,9 +8,9 @@ $ Project: Indigo Card Game
  * Time: 19:09
  */
 class Game(private val players: List<Player>) {
-    private var status = Status.START
-    private var deck: Deck = Deck()
-    private var table: Table = Table()
+    private var status = Status.STARTED
+    private val deck: Deck = Deck()
+    private val table: Table = Table()
     private var currentPlayer: Player = Player(false)
 
     val currentPlayerReadOnly: Player
@@ -33,10 +33,10 @@ class Game(private val players: List<Player>) {
     }
 
     fun getInitialCardsAsString(): String {
-        return "Initial cards on the table: ${table.getCardsAsString()}"
+        return "Initial cards on the table: ${table.getCardsAsString()}\n"
     }
 
-    fun getChoosePrompt(): String = "Choose a card to play (1-${currentPlayer.getNumberOfCardsInHand()})"
+    fun getChoosePrompt(): String = "Choose a card to play (1-${currentPlayer.getNumberOfCardsInHand()}):"
 
     fun getCurrentPlayerHandAsString(): String {
         return currentPlayer.getCardsInHandAsString()
@@ -49,17 +49,20 @@ class Game(private val players: List<Player>) {
     fun action(value: String) {
         when (value) {
             "robotTurn" -> {
+                status = Status.STARTED
                 val card = currentPlayer.throwCard(0)
                 table.addCard(card)
                 println("Computer plays $card\n")
             }
 
             "exit" -> {
-                status = Status.FINISHED
+                status = Status.EXITING
             }
 
             else -> {
+                status = Status.STARTED
                 if (!checkNumber(value)) {
+                    status = Status.WRONG_INPUT_NUMBER
                     return
                 }
 
@@ -67,6 +70,11 @@ class Game(private val players: List<Player>) {
                 val card = currentPlayer.throwCard(cardIndex)
                 table.addCard(card)
             }
+        }
+
+        if (table.getCardsCount() == 52) {
+            status = Status.FINISHED
+            return
         }
 
         if (currentPlayer.getNumberOfCardsInHand() == 0 && deck.getNumberOfCards() >= 6) {
@@ -77,8 +85,8 @@ class Game(private val players: List<Player>) {
         currentPlayer = players[(players.indexOf(currentPlayer) + 1) % players.size]
     }
 
-    private fun checkNumber(value: String): Boolean {
-        val regex = Regex("[1-${currentPlayer.getNumberOfCardsInHand()}]")
+    fun checkNumber(value: String): Boolean {
+        val regex = Regex("^[1-${currentPlayer.getNumberOfCardsInHand()}]")
         return regex.matches(value)
     }
 

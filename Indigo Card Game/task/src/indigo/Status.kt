@@ -8,7 +8,8 @@ $ Project: Indigo Card Game
  * Time: 19:11
  */
 enum class Status {
-    START,
-    NO_CARDS_LEFT,
+    STARTED,
+    EXITING,
+    WRONG_INPUT_NUMBER,
     FINISHED;
 }
