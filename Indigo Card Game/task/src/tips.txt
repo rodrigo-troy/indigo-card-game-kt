@@ -21,3 +21,5 @@ I handle the endgame functionality like this...
 2) give the last player to win cards (or first player to move if null) the cards and points from the table
 3) if cards won is equal to both players give +3 to first player to move else +3 points to player with most cards
 4) print the score
+
+https://github.com/marckoch/indigo-card-game/blob/main/src/main/kotlin/stage4/main.kt

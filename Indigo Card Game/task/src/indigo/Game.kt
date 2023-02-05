@@ -20,6 +20,8 @@ class Game(private val players: List<Player>,
         get() = currentPlayer
 
     init {
+        file.appendText("${deck.getCardsAsString()}\n")
+        file.appendText("${deck.getNumberOfCards()} cards left in the deck\n\n")
         table.addCards(deck.takeCards(4))
         players.forEach {
             dealCards(it,

@@ -46,6 +46,10 @@ fun main() {
     }
 
     file.appendText("Game Over")
+
+    if (game.getStatus() == Status.EXITING) {
+        println("Game Over")
+    }
 }
 
 fun checkPlayFirst(playFirst: String): Boolean {

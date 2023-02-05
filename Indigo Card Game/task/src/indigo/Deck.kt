@@ -22,6 +22,7 @@ class Deck {
                     }
             }
         cards.shuffle()
+        cards.shuffle()
     }
 
     fun takeCards(numberOfCards: Int): MutableList<Card> {
