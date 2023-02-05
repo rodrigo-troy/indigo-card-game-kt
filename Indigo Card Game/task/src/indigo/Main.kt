@@ -1,6 +1,13 @@
 package indigo
 
+//print all the println in the game into a file
+
+import java.io.File
+
 fun main() {
+    val file = File("output.txt")
+    file.writeText("Indigo Card Game\n")
+
     println("Indigo Card Game")
     println("Play first?")
     var playFirst = readln()
@@ -13,17 +20,21 @@ fun main() {
     val game = Game(listOf(Player(true,
                                   playFirst == "yes"),
                            Player(false,
-                                  playFirst == "no")))
+                                  playFirst == "no")),
+                    file)
 
     println(game.getInitialCardsAsString())
     while (game.getStatus() == Status.STARTED || game.getStatus() == Status.WRONG_INPUT_NUMBER) {
-        //println("Player ${game.currentPlayerReadOnly} turn")
+        file.appendText(game.getInitialCardsAsString()
+                            .removePrefix("Initial") + "\n")
         if (game.getStatus() != Status.WRONG_INPUT_NUMBER) {
+            file.appendText(Game.getTableStatus(game) + "\n")
             println(Game.getTableStatus(game))
         }
 
         if (game.currentPlayerReadOnly.isHuman) {
             if (game.getStatus() != Status.WRONG_INPUT_NUMBER) {
+                file.appendText(game.getCurrentPlayerHandAsString() + "\n")
                 println(game.getCurrentPlayerHandAsString())
             }
 
@@ -34,11 +45,7 @@ fun main() {
         }
     }
 
-    if (game.getStatus() == Status.FINISHED) {
-        println(Game.getTableStatus(game))
-    }
-
-    println("Game Over")
+    file.appendText("Game Over")
 }
 
 fun checkPlayFirst(playFirst: String): Boolean {

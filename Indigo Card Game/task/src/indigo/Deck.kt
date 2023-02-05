@@ -7,6 +7,8 @@ class Deck {
         reset()
     }
 
+    fun getCardsAsString(): String = "Deck cards: ${cards.joinToString(separator = " ")}"
+
     private fun reset() {
         cards.clear()
         Suit.values()

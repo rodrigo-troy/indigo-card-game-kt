@@ -15,13 +15,15 @@ class Table {
         if (cards.isEmpty())
             return "No cards on the table"
 
-        return "${cards.size} cards on the table, and the top card is ${cards.last()}"
+        return "\n${cards.size} cards on the table, and the top card is ${cards.last()}"
     }
 
     fun getTopCard(): Card = cards.lastOrNull() ?: Card(Face.UNDEFINED,
                                                         Suit.UNDEFINED)
 
     fun getCardsCount(): Int = cards.size
+
+    fun getCardsPoints(): Int = cards.sumOf { it.face.points }
 
     fun getCardsAsString(): String = cards.joinToString(" ")
 

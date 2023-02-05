@@ -1,0 +1,23 @@
+What is the game finish condition?
+when no cards are in the cardsdeck  + no cards are in hand for both human + comp
+
+When a player wins the cards on the table, how should I calculate his/her/computer scores?
+Add one score for each A, 10, J, Q, K card (other cards cost zero) from the table.
+A card that was used to win everthing on table counts also!
+
+When to add 3 extra scores (according the rules) to a player?
+when the end of the game is reached
+
+At the end of a game, when all score calculations are perfomed, you can see some cards
+remain on the table (if any). Just add them to last a card winner pocket or first player(according the rules). YOu don't need to calculate their scores, just show statistics like this:
+Score: Player 12 - Computer X
+Cards: Player 40 - Computer X
+
+Do not show statisitcs if a user typed "exit", just print Game Over
+
+
+I handle the endgame functionality like this...
+1) print out the string for cards on the table
+2) give the last player to win cards (or first player to move if null) the cards and points from the table
+3) if cards won is equal to both players give +3 to first player to move else +3 points to player with most cards
+4) print the score

@@ -1,5 +1,7 @@
 package indigo
 
+import java.io.File
+
 /**
  * Created with IntelliJ IDEA.
 $ Project: Indigo Card Game
@@ -7,7 +9,8 @@ $ Project: Indigo Card Game
  * Date: 02-02-23
  * Time: 19:09
  */
-class Game(private val players: List<Player>) {
+class Game(private val players: List<Player>,
+           val file: File) {
     private var status = Status.STARTED
     private val deck: Deck = Deck()
     private val table: Table = Table()
@@ -33,7 +36,7 @@ class Game(private val players: List<Player>) {
     }
 
     fun getInitialCardsAsString(): String {
-        return "Initial cards on the table: ${table.getCardsAsString()}\n"
+        return "Initial cards on the table: ${table.getCardsAsString()}"
     }
 
     fun getChoosePrompt(): String = "Choose a card to play (1-${currentPlayer.getNumberOfCardsInHand()}):"
@@ -46,23 +49,33 @@ class Game(private val players: List<Player>) {
         return status
     }
 
-    fun processCard(card: Card) {
+    private fun processCard(card: Card) {
+        //file.appendText("${deck.getCardsAsString()}\n")
+        file.appendText("${deck.getNumberOfCards()} cards left in the deck\n")
+        file.appendText("${if (currentPlayer.isHuman) "Player" else "Computer"} ${currentPlayer.getCardsInHandAsString()}\n")
         val topCard = table.getTopCard()
 
         if (card.face == topCard.face || card.suit == topCard.suit) {
-            currentPlayer.addEarnedCards(table.throwAllCards())
+            file.appendText("${if (currentPlayer.isHuman) "Player" else "Computer"} wins cards\n")
+            println("${if (currentPlayer.isHuman) "Player" else "Computer"} wins cards")
 
+            currentPlayer.addScore(table.getCardsPoints() + card.face.points)
+            currentPlayer.addEarnedCards(table.throwAllCards()
+                                             .plus(card)
+                                             .toMutableList())
             printPlayersScore()
+            println()
+        } else {
+            table.addCard(card)
         }
     }
 
-    fun printPlayersScore() {
-        println("${if (currentPlayer.isHuman) "Player" else "Computer"} wins cards")
-        val human = players.filter { it.isHuman }
-            .first()
-        val computer = players.filter { !it.isHuman }
-            .first()
+    private fun printPlayersScore() {
+        val human = players.first { it.isHuman }
+        val computer = players.first { !it.isHuman }
+        file.appendText("Score: Player ${human.getScore()} - Computer ${computer.getScore()}\n")
         print("Score: Player ${human.getScore()} - Computer ${computer.getScore()}\n")
+        file.appendText("Cards: Player ${human.getNumberOfCardsEarned()} - Computer ${computer.getNumberOfCardsEarned()}\n\n")
         print("Cards: Player ${human.getNumberOfCardsEarned()} - Computer ${computer.getNumberOfCardsEarned()}\n")
     }
 
@@ -71,8 +84,8 @@ class Game(private val players: List<Player>) {
             "robotTurn" -> {
                 status = Status.STARTED
                 val card = currentPlayer.throwCard(0)
-                table.addCard(card)
-                println("Computer plays $card\n")
+                file.appendText("Computer plays $card\n")
+                println("Computer plays $card")
                 processCard(card)
             }
 
@@ -89,13 +102,21 @@ class Game(private val players: List<Player>) {
 
                 val cardIndex = value.toInt() - 1
                 val card = currentPlayer.throwCard(cardIndex)
-                table.addCard(card)
+                file.appendText("Player plays $card\n")
                 processCard(card)
             }
         }
 
-        if (table.getCardsCount() == 52) {
+        if (players.sumOf { it.getNumberOfCardsInHand() } == 0 && deck.getNumberOfCards() == 0) {
+            println(getTableStatus(this))
+            val winner = players.maxByOrNull { it.getScore() } ?: players.first { it.isFirst }
+            winner.addScore(table.getCardsPoints())
+            winner.addEarnedCards(table.throwAllCards())
+            winner.addScore(3)
+            file.appendText("${if (winner.isHuman) "Player" else "Computer"} get the cards and 3 points\n")
             status = Status.FINISHED
+            printPlayersScore()
+            println("Game Over")
             return
         }
 
@@ -107,7 +128,7 @@ class Game(private val players: List<Player>) {
         currentPlayer = players[(players.indexOf(currentPlayer) + 1) % players.size]
     }
 
-    fun checkNumber(value: String): Boolean {
+    private fun checkNumber(value: String): Boolean {
         val regex = Regex("^[1-${currentPlayer.getNumberOfCardsInHand()}]")
         return regex.matches(value)
     }
