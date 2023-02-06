@@ -10,7 +10,7 @@ $ Project: Indigo Card Game
  * Time: 19:09
  */
 class Game(private val players: List<Player>,
-           val file: File) {
+           private val file: File) {
     private var status = Status.STARTED
     private val deck: Deck = Deck()
     private val table: Table = Table()
