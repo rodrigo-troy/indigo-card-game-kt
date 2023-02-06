@@ -32,8 +32,8 @@ enum class Face(val value: String,
               0);
 
     companion object {
-        fun fromString(value: String): Face? {
-            return values().find { it.value == value }
+        fun fromString(value: String): Face {
+            return values().find { it.value == value } ?: UNDEFINED
         }
     }
 }

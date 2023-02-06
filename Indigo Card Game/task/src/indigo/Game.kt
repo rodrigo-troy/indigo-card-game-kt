@@ -15,6 +15,7 @@ class Game(private val players: List<Player>,
     private val deck: Deck = Deck()
     private val table: Table = Table()
     private var currentPlayer: Player = Player(false)
+    private var lastWinner: Player = Player(false)
 
     val currentPlayerReadOnly: Player
         get() = currentPlayer
@@ -58,6 +59,7 @@ class Game(private val players: List<Player>,
         val topCard = table.getTopCard()
 
         if (card.face == topCard.face || card.suit == topCard.suit) {
+            lastWinner = currentPlayer
             file.appendText("${if (currentPlayer.isHuman) "Player" else "Computer"} wins cards\n")
             println("${if (currentPlayer.isHuman) "Player" else "Computer"} wins cards")
 
@@ -111,9 +113,9 @@ class Game(private val players: List<Player>,
 
         if (players.sumOf { it.getNumberOfCardsInHand() } == 0 && deck.getNumberOfCards() == 0) {
             println(getTableStatus(this))
-            val winner = players.maxByOrNull { it.getScore() } ?: players.first { it.isFirst }
-            winner.addScore(table.getCardsPoints())
-            winner.addEarnedCards(table.throwAllCards())
+            lastWinner.addScore(table.getCardsPoints())
+            lastWinner.addEarnedCards(table.throwAllCards())
+            val winner = players.maxByOrNull { it.getNumberOfCardsEarned() } ?: players.first { it.isFirst }
             winner.addScore(3)
             file.appendText("${if (winner.isHuman) "Player" else "Computer"} get the cards and 3 points\n")
             status = Status.FINISHED

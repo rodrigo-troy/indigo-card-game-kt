@@ -8,7 +8,7 @@ fun main() {
     val file = File("output.txt")
     file.writeText("Indigo Card Game\n")
 
-    println("Indigo Card Game")
+    println("Indigo Card Game".lowercase())
     println("Play first?")
     var playFirst = readln()
 
