@@ -7,10 +7,11 @@ $ Project: Indigo Card Game
  * Date: 03-02-23
  * Time: 14:16
  */
-class Player(val isHuman: Boolean,
-             val isFirst: Boolean = false) {
+open class Player(val name: String,
+                  val isHuman: Boolean,
+                  open val isFirst: Boolean) {
     private var cardsEarned: MutableList<Card> = mutableListOf()
-    private var cardsInHand: MutableList<Card> = mutableListOf()
+    protected var cardsInHand: MutableList<Card> = mutableListOf()
     private var score: Int = 0
 
     fun getScore(): Int = score
@@ -32,7 +33,7 @@ class Player(val isHuman: Boolean,
     fun getNumberOfCardsInHand(): Int = cardsInHand.size
 
     fun getCardsInHandAsString(): String {
-        var cardsInHandAsString = "Cards in hand: "
+        var cardsInHandAsString = ""
         cardsInHand.forEachIndexed { index, card ->
             cardsInHandAsString += "${index + 1})${card} "
         }

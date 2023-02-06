@@ -17,10 +17,8 @@ fun main() {
         playFirst = readln()
     }
 
-    val game = Game(listOf(Player(true,
-                                  playFirst == "yes"),
-                           Player(false,
-                                  playFirst == "no")),
+    val game = Game(listOf(Human(playFirst == "yes"),
+                           Computer(playFirst == "no")),
                     file)
 
     println(game.getInitialCardsAsString())
@@ -34,13 +32,14 @@ fun main() {
 
         if (game.currentPlayerReadOnly.isHuman) {
             if (game.getStatus() != Status.WRONG_INPUT_NUMBER) {
-                file.appendText(game.getCurrentPlayerHandAsString() + "\n")
-                println(game.getCurrentPlayerHandAsString())
+                file.appendText("Cards in hand: " + game.getCurrentPlayerHandAsString() + "\n")
+                println("Cards in hand: " + game.getCurrentPlayerHandAsString())
             }
 
             println(game.getChoosePrompt())
             game.action(readln())
         } else {
+            println(game.getCurrentPlayerHandAsString())
             game.action("robotTurn")
         }
     }

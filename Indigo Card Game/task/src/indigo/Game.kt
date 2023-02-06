@@ -2,6 +2,8 @@ package indigo
 
 import java.io.File
 
+private const val NUMBER_OF_CARDS = 6
+
 /**
  * Created with IntelliJ IDEA.
 $ Project: Indigo Card Game
@@ -14,8 +16,12 @@ class Game(private val players: List<Player>,
     private var status = Status.STARTED
     private val deck: Deck = Deck()
     private val table: Table = Table()
-    private var currentPlayer: Player = Player(false)
-    private var lastWinner: Player = Player(false)
+    private var currentPlayer: Player = Player("Player",
+                                               true,
+                                               true)
+    private var lastWinner: Player = Player("Player",
+                                            true,
+                                            true)
 
     val currentPlayerReadOnly: Player
         get() = currentPlayer
@@ -26,7 +32,7 @@ class Game(private val players: List<Player>,
         table.addCards(deck.takeCards(4))
         players.forEach {
             dealCards(it,
-                      6)
+                      NUMBER_OF_CARDS)
             if (it.isFirst) {
                 currentPlayer = it
             }
@@ -55,13 +61,12 @@ class Game(private val players: List<Player>,
     private fun processCard(card: Card) {
         //file.appendText("${deck.getCardsAsString()}\n")
         file.appendText("${deck.getNumberOfCards()} cards left in the deck\n")
-        file.appendText("${if (currentPlayer.isHuman) "Player" else "Computer"} ${currentPlayer.getCardsInHandAsString()}\n")
         val topCard = table.getTopCard()
 
         if (card.face == topCard.face || card.suit == topCard.suit) {
             lastWinner = currentPlayer
-            file.appendText("${if (currentPlayer.isHuman) "Player" else "Computer"} wins cards\n")
-            println("${if (currentPlayer.isHuman) "Player" else "Computer"} wins cards")
+            file.appendText("${currentPlayer.name} wins cards\n")
+            println("${currentPlayer.name} wins cards")
 
             currentPlayer.addScore(table.getCardsPoints() + card.face.points)
             currentPlayer.addEarnedCards(table.throwAllCards()
@@ -88,8 +93,8 @@ class Game(private val players: List<Player>,
             "robotTurn" -> {
                 status = Status.STARTED
                 val card = currentPlayer.throwCard(0)
-                file.appendText("Computer plays $card\n")
-                println("Computer plays $card")
+                file.appendText("${currentPlayer.name} plays $card\n")
+                println("${currentPlayer.name} plays $card")
                 processCard(card)
             }
 
@@ -124,9 +129,9 @@ class Game(private val players: List<Player>,
             return
         }
 
-        if (currentPlayer.getNumberOfCardsInHand() == 0 && deck.getNumberOfCards() >= 6) {
+        if (currentPlayer.getNumberOfCardsInHand() == 0 && deck.getNumberOfCards() >= NUMBER_OF_CARDS) {
             dealCards(currentPlayer,
-                      6)
+                      NUMBER_OF_CARDS)
         }
 
         currentPlayer = players[(players.indexOf(currentPlayer) + 1) % players.size]

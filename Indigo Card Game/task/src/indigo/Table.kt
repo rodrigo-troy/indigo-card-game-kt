@@ -21,7 +21,7 @@ class Table {
     fun getTopCard(): Card = cards.lastOrNull() ?: Card(Face.UNDEFINED,
                                                         Suit.UNDEFINED)
 
-    fun getCardsCount(): Int = cards.size
+    fun getCards(): List<Card> = cards.toList()
 
     fun getCardsPoints(): Int = cards.sumOf { it.face.points }
 
