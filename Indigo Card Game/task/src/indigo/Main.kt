@@ -18,13 +18,14 @@ fun main() {
     }
 
     val game = Game(listOf(Human(playFirst == "yes"),
-                           Computer(playFirst == "no")),
+                           Computer(playFirst == "no",
+                                    file)),
                     file)
 
     println(game.getInitialCardsAsString())
     while (game.getStatus() == Status.STARTED || game.getStatus() == Status.WRONG_INPUT_NUMBER) {
         file.appendText(game.getInitialCardsAsString()
-                            .removePrefix("Initial") + "\n")
+                            .removePrefix("Initial ") + "\n")
         if (game.getStatus() != Status.WRONG_INPUT_NUMBER) {
             file.appendText(Game.getTableStatus(game) + "\n")
             println(Game.getTableStatus(game))

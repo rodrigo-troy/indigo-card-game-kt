@@ -92,7 +92,7 @@ class Game(private val players: List<Player>,
         when (value) {
             "robotTurn" -> {
                 status = Status.STARTED
-                val card = currentPlayer.throwCard(0)
+                val card = (currentPlayer as Computer).throwCard(table.getCards())
                 file.appendText("${currentPlayer.name} plays $card\n")
                 println("${currentPlayer.name} plays $card")
                 processCard(card)

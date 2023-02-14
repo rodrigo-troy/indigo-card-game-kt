@@ -12,4 +12,8 @@ data class Card(val face: Face,
     override fun toString(): String {
         return "${face.value}${suit.value}"
     }
+
+    fun isCandidateCard(topCard: Card): Boolean {
+        return face == topCard.face || suit == topCard.suit
+    }
 }
