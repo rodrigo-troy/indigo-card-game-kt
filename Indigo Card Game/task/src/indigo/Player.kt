@@ -32,7 +32,7 @@ open class Player(val name: String,
 
     fun getNumberOfCardsInHand(): Int = cardsInHand.size
 
-    fun getCardsInHandAsString(): String {
+    open fun getCardsInHandAsString(): String {
         var cardsInHandAsString = ""
         cardsInHand.forEachIndexed { index, card ->
             cardsInHandAsString += "${index + 1})${card} "

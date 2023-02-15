@@ -52,7 +52,7 @@ class Computer(override val isFirst: Boolean,
                     }
                 }
 
-                return card
+                return this.cardsInHand.removeAt(this.cardsInHand.indexOf(card))
             }
 
             if (this.allGroupHaveTheSameSize(cardsGroupedBySuit) && !this.allGroupHaveTheSameSize(cardsGroupedByFace)) {
@@ -69,7 +69,7 @@ class Computer(override val isFirst: Boolean,
                     }
                 }
 
-                return card
+                return this.cardsInHand.removeAt(this.cardsInHand.indexOf(card))
             }
 
             this.cardsInHand.removeAt(0)
@@ -83,7 +83,6 @@ class Computer(override val isFirst: Boolean,
 
         val candidateCardsGroupedBySuit: Map<Suit, List<Card>> = getCandidateCards(tableCards).groupBy { it.suit }
         val candidateCardsGroupedByFace: Map<Face, List<Card>> = getCandidateCards(tableCards).groupBy { it.face }
-
 
         if (!this.allGroupHaveTheSameSize(candidateCardsGroupedBySuit)) {
             file.appendText("There are candidate cards with the same suit\n")
@@ -99,7 +98,7 @@ class Computer(override val isFirst: Boolean,
                 }
             }
 
-            return card
+            return this.cardsInHand.removeAt(this.cardsInHand.indexOf(card))
         }
 
         if (this.allGroupHaveTheSameSize(candidateCardsGroupedBySuit) && !this.allGroupHaveTheSameSize(candidateCardsGroupedByFace)) {
@@ -116,10 +115,11 @@ class Computer(override val isFirst: Boolean,
                 }
             }
 
-            return card
+            return this.cardsInHand.removeAt(this.cardsInHand.indexOf(card))
         }
 
-        return this.getCandidateCards(tableCards).first()
+        val card = this.getCandidateCards(tableCards).first()
+        return this.cardsInHand.removeAt(this.cardsInHand.indexOf(card))
     }
 
     private fun <T> allGroupHaveTheSameSize(map: Map<T, List<Card>>): Boolean {
@@ -138,7 +138,6 @@ class Computer(override val isFirst: Boolean,
         return getCandidateCards(tableCards).size
     }
 
-
     private fun getCandidateCards(tableCards: List<Card>): List<Card> {
         if (tableCards.isEmpty()) {
             return emptyList()
@@ -154,5 +153,14 @@ class Computer(override val isFirst: Boolean,
         }
 
         return candidateCards
+    }
+
+    override fun getCardsInHandAsString(): String {
+        var cardsInHandAsString = ""
+        cardsInHand.forEachIndexed { index, card ->
+            cardsInHandAsString += "${card} "
+        }
+
+        return cardsInHandAsString
     }
 }
