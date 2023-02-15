@@ -2,12 +2,7 @@ package indigo
 
 //print all the println in the game into a file
 
-import java.io.File
-
 fun main() {
-    val file = File("output.txt")
-    file.writeText("Indigo Card Game\n")
-
     println("Indigo Card Game".lowercase())
     println("Play first?")
     var playFirst = readln()
@@ -18,22 +13,16 @@ fun main() {
     }
 
     val game = Game(listOf(Human(playFirst == "yes"),
-                           Computer(playFirst == "no",
-                                    file)),
-                    file)
+                           Computer(playFirst == "no")))
 
     println(game.getInitialCardsAsString())
     while (game.getStatus() == Status.STARTED || game.getStatus() == Status.WRONG_INPUT_NUMBER) {
-        file.appendText(game.getInitialCardsAsString()
-                            .removePrefix("Initial ") + "\n")
         if (game.getStatus() != Status.WRONG_INPUT_NUMBER) {
-            file.appendText(Game.getTableStatus(game) + "\n")
             println(Game.getTableStatus(game))
         }
 
         if (game.currentPlayerReadOnly.isHuman) {
             if (game.getStatus() != Status.WRONG_INPUT_NUMBER) {
-                file.appendText("Cards in hand: " + game.getCurrentPlayerHandAsString() + "\n")
                 println("Cards in hand: " + game.getCurrentPlayerHandAsString())
             }
 
@@ -44,8 +33,6 @@ fun main() {
             game.action("robotTurn")
         }
     }
-
-    file.appendText("Game Over")
 
     if (game.getStatus() == Status.EXITING) {
         println("Game Over")

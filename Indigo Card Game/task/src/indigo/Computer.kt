@@ -1,7 +1,5 @@
 package indigo
 
-import java.io.File
-
 /**
  * Created with IntelliJ IDEA.
 $ Project: Indigo Card Game
@@ -10,20 +8,12 @@ $ Project: Indigo Card Game
  * Time: 16:52
  */
 
-class Computer(override val isFirst: Boolean,
-               private val file: File) : Player("Computer",
-                                                false,
-                                                isFirst) {
+class Computer(override val isFirst: Boolean) : Player("Computer",
+                                                       false,
+                                                       isFirst) {
 
     fun throwCard(tableCards: List<Card>): Card {
-        file.appendText("Computer's turn: Computer's cards: ${this.getCardsInHandAsString()}\n")
-        file.appendText("Computer's turn: Candidate cards: ${
-            this.getCandidateCards(tableCards).joinToString { it.toString() }
-        }\n")
-
-
         if (this.cardsInHand.size == 1) {
-            file.appendText("Only one card left in hand, playing ${this.cardsInHand.first()}\n")
             return this.cardsInHand.removeAt(0)
         }
 
@@ -31,18 +21,12 @@ class Computer(override val isFirst: Boolean,
         val cardsGroupedByFace: Map<Face, List<Card>> = cardsInHand.groupBy { it.face }
 
         if (tableCards.isEmpty() || this.candidateCardsCount(tableCards) == 0) {
-            file.appendText("No cards on the table\n")
-
             if (cardsGroupedBySuit.size == 1) {
-                file.appendText("Only one suit in hand, playing ${this.cardsInHand.first()}\n")
                 return this.cardsInHand.removeAt(0)
             }
 
             if (!this.allGroupHaveTheSameSize(cardsGroupedBySuit)) {
-                file.appendText("There are cards in hand with the same suit\n")
-
                 val biggestGroupBySuit = cardsGroupedBySuit.maxOf { it.value.size }
-                file.appendText("Biggest group by Suit: $biggestGroupBySuit\n")
 
                 val card = biggestGroupBySuit.let { max ->
                     val filter = cardsGroupedBySuit.filter { it.value.size == max }
@@ -55,11 +39,8 @@ class Computer(override val isFirst: Boolean,
                 return this.cardsInHand.removeAt(this.cardsInHand.indexOf(card))
             }
 
-            if (this.allGroupHaveTheSameSize(cardsGroupedBySuit) && !this.allGroupHaveTheSameSize(cardsGroupedByFace)) {
-                file.appendText("There are no cards in hand with the same suit, but there are cards with the same rank\n")
-
+            if (!this.allGroupHaveTheSameSize(cardsGroupedByFace)) {
                 val biggestGroupByFace = cardsGroupedByFace.maxOf { it.value.size }
-                file.appendText("Biggest group by Face: $biggestGroupByFace\n")
 
                 val card = biggestGroupByFace.let { max ->
                     val filter = cardsGroupedByFace.filter { it.value.size == max }
@@ -72,12 +53,11 @@ class Computer(override val isFirst: Boolean,
                 return this.cardsInHand.removeAt(this.cardsInHand.indexOf(card))
             }
 
-            this.cardsInHand.removeAt(0)
+            return this.cardsInHand.removeAt(0)
         }
 
         if (this.candidateCardsCount(tableCards) == 1) {
             val card = getCandidateCards(tableCards).first()
-            file.appendText("Only one candidate card, playing ${card}\n")
             return this.cardsInHand.removeAt(this.cardsInHand.indexOf(card))
         }
 
@@ -85,10 +65,7 @@ class Computer(override val isFirst: Boolean,
         val candidateCardsGroupedByFace: Map<Face, List<Card>> = getCandidateCards(tableCards).groupBy { it.face }
 
         if (!this.allGroupHaveTheSameSize(candidateCardsGroupedBySuit)) {
-            file.appendText("There are candidate cards with the same suit\n")
-
             val biggestGroupBySuit = candidateCardsGroupedBySuit.maxOf { it.value.size }
-            file.appendText("Biggest group by Suit: $biggestGroupBySuit\n")
 
             val card = biggestGroupBySuit.let { max ->
                 val filter = candidateCardsGroupedBySuit.filter { it.value.size == max }
@@ -101,11 +78,8 @@ class Computer(override val isFirst: Boolean,
             return this.cardsInHand.removeAt(this.cardsInHand.indexOf(card))
         }
 
-        if (this.allGroupHaveTheSameSize(candidateCardsGroupedBySuit) && !this.allGroupHaveTheSameSize(candidateCardsGroupedByFace)) {
-            file.appendText("There are no candidate cards with the same suit, but there are candidate cards with the same rank\n")
-
+        if (!this.allGroupHaveTheSameSize(candidateCardsGroupedByFace)) {
             val biggestGroupByFace = candidateCardsGroupedByFace.maxOf { it.value.size }
-            file.appendText("Biggest group by Face: $biggestGroupByFace\n")
 
             val card = biggestGroupByFace.let { max ->
                 val filter = candidateCardsGroupedByFace.filter { it.value.size == max }

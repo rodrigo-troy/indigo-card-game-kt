@@ -1,7 +1,5 @@
 package indigo
 
-import java.io.File
-
 private const val NUMBER_OF_CARDS = 6
 
 /**
@@ -11,8 +9,7 @@ $ Project: Indigo Card Game
  * Date: 02-02-23
  * Time: 19:09
  */
-class Game(private val players: List<Player>,
-           private val file: File) {
+class Game(private val players: List<Player>) {
     private var status = Status.STARTED
     private val deck: Deck = Deck()
     private val table: Table = Table()
@@ -27,8 +24,6 @@ class Game(private val players: List<Player>,
         get() = currentPlayer
 
     init {
-        file.appendText("${deck.getCardsAsString()}\n")
-        file.appendText("${deck.getNumberOfCards()} cards left in the deck\n\n")
         table.addCards(deck.takeCards(4))
         players.forEach {
             dealCards(it,
@@ -60,12 +55,10 @@ class Game(private val players: List<Player>,
 
     private fun processCard(card: Card) {
         //file.appendText("${deck.getCardsAsString()}\n")
-        file.appendText("${deck.getNumberOfCards()} cards left in the deck\n")
         val topCard = table.getTopCard()
 
         if (card.face == topCard.face || card.suit == topCard.suit) {
             lastWinner = currentPlayer
-            file.appendText("${currentPlayer.name} wins cards\n")
             println("${currentPlayer.name} wins cards")
 
             currentPlayer.addScore(table.getCardsPoints() + card.face.points)
@@ -82,9 +75,7 @@ class Game(private val players: List<Player>,
     private fun printPlayersScore() {
         val human = players.first { it.isHuman }
         val computer = players.first { !it.isHuman }
-        file.appendText("Score: Player ${human.getScore()} - Computer ${computer.getScore()}\n")
         print("Score: Player ${human.getScore()} - Computer ${computer.getScore()}\n")
-        file.appendText("Cards: Player ${human.getNumberOfCardsEarned()} - Computer ${computer.getNumberOfCardsEarned()}\n\n")
         print("Cards: Player ${human.getNumberOfCardsEarned()} - Computer ${computer.getNumberOfCardsEarned()}\n")
     }
 
@@ -93,7 +84,6 @@ class Game(private val players: List<Player>,
             "robotTurn" -> {
                 status = Status.STARTED
                 val card = (currentPlayer as Computer).throwCard(table.getCards())
-                file.appendText("${currentPlayer.name} plays $card\n")
                 println("${currentPlayer.name} plays $card")
                 processCard(card)
             }
@@ -111,7 +101,6 @@ class Game(private val players: List<Player>,
 
                 val cardIndex = value.toInt() - 1
                 val card = currentPlayer.throwCard(cardIndex)
-                file.appendText("Player plays $card\n")
                 processCard(card)
             }
         }
@@ -122,7 +111,6 @@ class Game(private val players: List<Player>,
             lastWinner.addEarnedCards(table.throwAllCards())
             val winner = players.maxByOrNull { it.getNumberOfCardsEarned() } ?: players.first { it.isFirst }
             winner.addScore(3)
-            file.appendText("${if (winner.isHuman) "Player" else "Computer"} get the cards and 3 points\n")
             status = Status.FINISHED
             printPlayersScore()
             println("Game Over")
